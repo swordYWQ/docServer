@@ -26,6 +26,7 @@ const execQuery = (sql, params, callback) => {
                 callback(rows)
             }
         })
+        console.log(query.sql)
     })
 }
 module.exports = {

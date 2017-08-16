@@ -1,6 +1,6 @@
 var dbConnection = require('../db/index')
-var log = require('../util/log')
-var resDataUtil = require('../util/resDataUtil')
+var log = require('../utils/log')
+var resDataUtil = require('../utils/resDataUtil')
 /**
  * 登录
  * @param {*} req 
@@ -10,8 +10,9 @@ const loginIn = (req, res) => {
     var param = req.query;
     if (param.username && param.password) {
         var sql = "select * from docSystem.user where username = ? and password = ?"
-        var params = [param.username, param.password]
-        dbConnection.mysqlDB.execQuery(sql, params, (rows) => {
+        var sqlData = [param.username, param.password]
+        dbConnection.mysqlDB.execQuery(sql, sqlData, (rows) => {
+            console.log(rows)
             if (rows.length > 0) {
                 for (var i = 0; i < rows.length; i++) {
                     if (param.username == rows[i].username && param.password == rows[i].password) {
@@ -21,6 +22,8 @@ const loginIn = (req, res) => {
                             password: param.password
                         };
                         req.session.user = user;
+                        console.log(req)
+                        // res.header("Set-Cookie", "SESSIONID=" + req.sessionID);
                         log.info("登录IP:" + req._remoteAddress + " 登陆成功!")
                         res.end(resDataUtil.success({
                             username: param.username
@@ -31,8 +34,8 @@ const loginIn = (req, res) => {
                     }
                 }
             } else {
-                log.warn("登录IP:" + req._remoteAddress + " 用户名不存在!")
-                res.end(resDataUtil.error([], '用户名不存在!'));
+                log.warn("登录IP:" + req._remoteAddress + " 用户名或密码错误!")
+                res.end(resDataUtil.error([], '用户名或密码错误!'));
             }
         })
     } else {
@@ -48,8 +51,10 @@ const loginIn = (req, res) => {
  */
 const loginOut = (req, res) => {
     // req.session.user = null;
+    // var cookie=req.headers.cookie.split('=')[1];
+    console.log(req.session)
     req.session.destroy();
-    res.end(resDataUtil.success("success"));
+    res.end(resDataUtil.success(req.sessionStore))//"success"));
 }
 
 module.exports = {

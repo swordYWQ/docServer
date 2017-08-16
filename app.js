@@ -14,12 +14,12 @@ app.set('port', 8888);
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(session({
-    resave: false, // don't save session if unmodified
-    saveUninitialized: false, // don't create session until something stored
+    // resave: false, // don't save session if unmodified
+    // saveUninitialized: false, // don't create session until something stored
     secret: 'secret',
     // store: new redisStore(redisConfig),
     cookie: {
-        maxAge: 30 * 1000 // 有效期，单位是毫秒
+        maxAge: 10 * 60 * 1000 // 有效期，单位是毫秒
     }
 }));
 app.use(bodyParser.urlencoded({
